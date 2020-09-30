@@ -49,7 +49,14 @@ let click_with = {
   pc: 'click',
 };
 
-Given(/I start the interview[ on ]?(.*)/, async (optional_device) => {
+// I start the interview on mobile
+// I start the interview on pc
+// I start the interview
+// I go to the file "juvenile-sealing" on a mobile
+// I go to "lskdfjlasd.com" on pc
+// I go to the interview at "lksdfjls.com" on pc
+// /I go to the interview at ?(?:"([^"]+)")?(?: on )?(.*) /
+Given(/I start the interview[ on ]?(.*)/, async (optional_device) => {  // √
   // If there is no browser open, start a new one
   if (!scope.browser) {
     scope.browser = await scope.driver.launch({ headless: !process.env.DEBUG });
@@ -88,49 +95,21 @@ Given(/I start the interview[ on ]?(.*)/, async (optional_device) => {
 //#####################################
 
 // Need to see if it's possible to remove the need for this on most occasions
-When(/I wait (\d+) seconds?/, async (seconds) => {
-  await scope.afterStep(scope, {waitForTimeout: (seconds * 1000)});
+// I wait 1 second
+// I wait .5 seconds
+When(/I wait (\d*\.?\d+) seconds?/, async (seconds) => {  // √
+  await scope.afterStep(scope, {waitForTimeout: (parseFloat(seconds) * 1000)});
 });
 
-When("I do nothing", async () => {
-  /* Here to make writing tests more comfortable. */
-  await scope.afterStep(scope);
-});
-
-// Allow emphasis with capital letters
-Then(/I should see the phrase "([^"]+)"/i, async (phrase) => {
-  /* In Chrome, this `innerText` gets only visible text */
-  const bodyText = await scope.page.$eval('body', elem => elem.innerText);
-  expect(bodyText).to.contain(phrase);
-
-  await scope.afterStep(scope);
-});
-
-// Allow emphasis with capital letters
-Then(/I should not see the phrase "([^"]+)"/i, async (phrase) => {
-  /* In Chrome, this `innerText` gets only visible text */
-  const bodyText = await scope.page.$eval('body', elem => elem.innerText);
-  expect(bodyText).not.to.contain(phrase);
-
-  await scope.afterStep(scope);
-});
-
-Then('I should see the link {string}', async (linkText) => {
-  let [link] = await scope.page.$x(`//a[contains(text(), "${linkText}")]`);
-  expect(link).to.exist;
-
-  await scope.afterStep(scope);
-});
+/* Here to make writing tests more comfortable. */
+When("I do nothing", async () => { await scope.afterStep(scope); });  // √
 
 // TODO: Switch to getting the id and then checking it against the argument
 //     which will make for more useful test error messages.
-Then('the question id should be {string}', async (question_id) => {
+Then('the question id should be {string}', async (question_id) => {  // √
   /* Looks for a santized version of the question id as it's written
   *     in the .yml. docassemble:
-  *     re.sub(r'[^A-Za-z0-9]+', '-', interview_status.question.id.lower())
-  *  
-  *  WARNING: Does not handle actual html `class` name on page
-  */
+  *     re.sub(r'[^A-Za-z0-9]+', '-', interview_status.question.id.lower()) */
   clean_id = question_id.toLowerCase().replace(/[^A-Za-z0-9]+/g, '-');
   question_class = 'question-' + clean_id;
   const element = await scope.page.waitFor('body.' + question_class);
@@ -139,23 +118,30 @@ Then('the question id should be {string}', async (question_id) => {
   await scope.afterStep(scope);
 });
 
-Then('an element should have the id {string}', async (id) => {
+// Allow emphasis with capital letters
+Then(/I should see the phrase "([^"]+)"/i, async (phrase) => {  // √
+  /* In Chrome, this `innerText` gets only visible text */
+  const bodyText = await scope.page.$eval('body', elem => elem.innerText);
+  expect(bodyText).to.contain(phrase);
+
+  await scope.afterStep(scope);
+});
+
+// Allow emphasis with capital letters
+Then(/I should not see the phrase "([^"]+)"/i, async (phrase) => {  // √
+  /* In Chrome, this `innerText` gets only visible text */
+  const bodyText = await scope.page.$eval('body', elem => elem.innerText);
+  expect(bodyText).not.to.contain(phrase);
+
+  await scope.afterStep(scope);
+});
+
+Then('an element should have the id {string}', async (id) => {  // √
   const element = await scope.page.waitFor('#' + id);
   expect(element).to.exist;
 
   await scope.afterStep(scope);
 });
-
-Then('I will be told an answer is invalid', async () => {
-  let error_message_elem = await Promise.race([
-      scope.page.waitForSelector('.alert-danger'),
-      scope.page.waitForSelector('.da-has-error'),
-    ]);
-  expect( error_message_elem ).to.exist;
-
-  await scope.afterStep(scope);
-});
-
 
 // TODO:
 // Just realized it's much more likely that the group name will be
@@ -173,9 +159,10 @@ let ordinal = '?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tent
 // Haven't figured out ordinal for group label yet
 // Allow "checkbox" and "radio"? Why would they be called the same thing?
 let the_checkbox_is_as_expected = new RegExp(`the ${ ordinal } ?(?:"([^"]+)")? checkbox ?(?:in "([^"]+)")? is (checked|unchecked)`);
-Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expected_status) => {
+Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expected_status) => {  // √
   /* Non-dropdown non-combobox choices
   * Examples of use:
+  * 1. the checkbox is unchecked
   * 1. the third checkbox is checked
   * 1. the "My court" checkbox is unchecked
   * 1. the checkbox in "Which service" is checked
@@ -183,9 +170,11 @@ Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expec
   * 1. the third checkbox in "Which service" is checked
   * 1. the "My court" checkbox in "Which service" is checked
   * 1. the third "My court" checkbox in "Which service" is checked
-  * 1. the checkbox is unchecked
   * combos: none; a; b; c; a b; a c; b c; a b c;
   */
+
+  // First dig all the way down to the label, then dig back out
+
   // Defaults
   ordinal = ordinal || 'first';
   label_text = label_text || '';
@@ -235,15 +224,7 @@ Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expec
   await scope.afterStep(scope);
 });
 
-Then('I arrive at the next page', async () => {
-  /* Tests for detection of url change from button or link tap.
-  *    Can other things trigger navigation? Re: other inputs things
-  *    like 'Enter' acting like a click is a test for docassemble */
-  expect( scope.navigated ).to.be.true;
-  await scope.afterStep(scope);
-});
-
-Then(/I (don't|can't) continue/, async (unused) => {
+Then(/I (don't|can't) continue/, async (unused) => {  // √
   /* Tests for detection of url change from button or link tap.
   *    Can other things trigger navigation? Re: other inputs things
   *    like 'Enter' acting like a click is a test for docassemble */
@@ -251,7 +232,33 @@ Then(/I (don't|can't) continue/, async (unused) => {
   await scope.afterStep(scope);
 });
 
-Then(/the link "([^"]+)" should lead to "([^"]+)"/, async (linkText, expected_url) => {
+Then('I will be told an answer is invalid', async () => {  // √
+  let error_message_elem = await Promise.race([
+      scope.page.waitForSelector('.alert-danger'),
+      scope.page.waitForSelector('.da-has-error'),
+    ]);
+  expect( error_message_elem ).to.exist;
+
+  await scope.afterStep(scope);
+});
+
+Then('I arrive at the next page', async () => {  // √
+  /* Tests for detection of url change from button or link tap.
+  *    Can other things trigger navigation? Re: other inputs things
+  *    like 'Enter' acting like a click is a test for docassemble */
+  expect( scope.navigated ).to.be.true;
+  await scope.afterStep(scope);
+});
+
+Then('I should see the link {string}', async (linkText) => {  // √
+  let [link] = await scope.page.$x(`//a[contains(text(), "${linkText}")]`);
+  expect(link).to.exist;
+
+  await scope.afterStep(scope);
+});
+
+// Link observations have the 'Escape' button link in mind
+Then(/the "([^"]+)" link leads to "([^"]+)"/, async (linkText, expected_url) => {  // √
   let [link] = await scope.page.$x(`//a[contains(text(), "${linkText}")]`);
   
   let prop_obj = await link.getProperty('href');
@@ -261,7 +268,7 @@ Then(/the link "([^"]+)" should lead to "([^"]+)"/, async (linkText, expected_ur
   await scope.afterStep(scope);
 });
 
-Then(/the link "([^"]+)" should open in (a new window|the same window)/, async (linkText, which_window) => {
+Then(/the "([^"]+)" link opens in (a new window|the same window)/, async (linkText, which_window) => {  // √
   let [link] = await scope.page.$x(`//a[contains(text(), "${linkText}")]`);
 
   let prop_obj = await link.getProperty('target');
@@ -278,8 +285,6 @@ Then(/the link "([^"]+)" should open in (a new window|the same window)/, async (
   await scope.afterStep(scope);
 });
 
-
-
 //#####################################
 //#####################################
 // Actions
@@ -292,7 +297,7 @@ Then(/the link "([^"]+)" should open in (a new window|the same window)/, async (
 
 // Consider people wanting to use this for an in-interview page
 // Also consider 'the link url "..." should open...'?
-Then(/the link "([^"]+)" should open a working page/, async (linkText) => {
+Then(/the "([^"]+)" link opens a working page/, async (linkText) => {  // √
   let [link] = await scope.page.$x(`//a[contains(text(), "${linkText}")]`);
   let prop_obj = await link.getProperty('href');
   let actual_url = await prop_obj.jsonValue();
@@ -306,7 +311,7 @@ Then(/the link "([^"]+)" should open a working page/, async (linkText) => {
 });
 
 
-When(/I tap the (button|link) "([^"]+)"/, async (elemType, phrase) => {
+When(/I tap the (button|link) "([^"]+)"/, async (elemType, phrase) => {  // √
   /* Taps a button and stores or reacts to what happens:
   *    navigation, validation error, page error, just a click. */
   let start_url = await scope.page.url()
@@ -356,7 +361,7 @@ When(/I tap the (button|link) "([^"]+)"/, async (elemType, phrase) => {
 // UI element interaction
 //#####################################
 
-When('I tap the defined text link {string}', async (phrase) => {
+When('I tap the defined text link {string}', async (phrase) => {  // ~
   /* Not sure what 'defined' means here. Maybe for terms? */
   const [link] = await scope.page.$x(`//a[contains(text(), "${phrase}")]`);
   if (link) {
@@ -394,8 +399,10 @@ When(/I tap the option with the text "([^"]+)"/, async (label_text) => {
 });
 
 // 'I choose {string}'? Is this precise enough to avoid dropdown confusion?
-// When('I tap the {string} option', async (label_text) => {
-When('I choose {string}', async (label_text) => {
+// This is also confusing because it could unselect something. I think 'choose' is a bad idea.
+// Tapping does require the dev to know what the state of the choice was before, though.
+When('I tap the {string} choice', async (label_text) => {
+// When('I choose {string}', async (label_text) => {
   /* Taps the first checkbox/radio/thing with a label that contains `label_text`.
   *    Very limited. Anything more is a future feature.
   */
