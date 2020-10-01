@@ -154,8 +154,8 @@ KEY:
 // ~ @step(r'I set the text box to "([^"]*)"')
 // ~ @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
 // ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)?
-// ^ I type {string} in the {string} field  // not actually working
-// ^ I type {string} in the unlabeled field  // not actually working
+// ~1 I type {string} in the {string} field  // not actually working
+// ~1 I type {string} in the unlabeled field  // not actually working
 
 // ? I clear the textbox
 
