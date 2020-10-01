@@ -6,7 +6,6 @@ const scope = require('./scope');
 
 /* Of Note:
 - We're using `*=` because sometimes da text has funny characters in it that are hard to anticipate
-
 */
 
 
@@ -150,7 +149,7 @@ Then('an element should have the id {string}', async (id) => {  // √
 // ordinal of the group would probably be more comfortable for a human.
 // Need to think about this.
 let ordinal_to_integer = {
-  first: 0, second: 1, third: 2, fourth: 3, fifth: 4,
+  only: 0, first: 0, second: 1, third: 2, fourth: 3, fifth: 4,
   sixth: 5, seventh: 6, eighth: 7, ninth: 8, tenth: 9,
   '1st': 0, '2nd': 1, '3rd': 2, '4th': 3, '5th': 4,
   '6th': 5, '7th': 6, '8th': 7, '9th': 8,'10th': 9,
@@ -158,11 +157,14 @@ let ordinal_to_integer = {
 let ordinal = '?(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)?';
 // Haven't figured out ordinal for group label yet
 // Allow "checkbox" and "radio"? Why would they be called the same thing?
-let the_checkbox_is_as_expected = new RegExp(`the ${ ordinal } ?(?:"([^"]+)")? checkbox ?(?:in "([^"]+)")? is (checked|unchecked)`);
-Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expected_status) => {  // √
+let the_checkbox_is_as_expected = new RegExp(`the ${ ordinal } ?(?:"([^"]+)")? (choice|checkbox|radio)(?: button)? ?(?:in "([^"]+)")? is (checked|unchecked|)`);
+Then(the_checkbox_is_as_expected, async (ordinal, label_text, choice_type, group_label_text, expected_status) => {  // √
   /* Non-dropdown non-combobox choices
   * Examples of use:
+  * 1. the choice is unchecked
+  * 1. the radio is unchecked
   * 1. the checkbox is unchecked
+  * 1. the only checkbox is unchecked
   * 1. the third checkbox is checked
   * 1. the "My court" checkbox is unchecked
   * 1. the checkbox in "Which service" is checked
@@ -172,50 +174,48 @@ Then(the_checkbox_is_as_expected, async (ordinal, label_text, group_label, expec
   * 1. the third "My court" checkbox in "Which service" is checked
   * combos: none; a; b; c; a b; a c; b c; a b c;
   */
-
-  // First dig all the way down to the label, then dig back out
+  // Proposed: First dig all the way down to the label, then dig back out
+  // Regected: It's not clear how to keep things in order and filtering them
+  // that way is more confusing, not less. It also takes more lines of code.
+  // Proposed: First collect all elements of expected status.
+  // Rejected: That ruins getting the correct ordinal
 
   // Defaults
   ordinal = ordinal || 'first';
   label_text = label_text || '';
-  group_label = group_label || '';
-
+  group_label_text = group_label_text || '';
+  
   let index = ordinal_to_integer[ ordinal ];
+  let type = `@role="${ choice_type }"`  // Is this complicating things to much?
+  if ( choice_type === 'choice') { type = `@role="checkbox" or @role="radio"` }
 
-  // If possible, get the group to which this choice belongs
-  // Only handles one group for now
-  let group_id_elem = null;
+  // If possible, get the first group to which this choice belongs
   let group_name = null;
-  if ( group_label ) {
+  if ( group_label_text ) {
     // Example: `//*[@id="daform"]//label[contains(text(), "serve")][1]`
-    let identifier_xpath = `//*[@id="daform"]//label[contains(text(), "${ group_label }")][1]`;
-    [group_id_elem] = await scope.page.$x( identifier_xpath );
+    let identifier_xpath = `//*[@id="daform"]//label[contains(text(), "${ group_label_text }")][1]`;
+    let [group_label] = await scope.page.$x( identifier_xpath );
+    expect( group_label, `Did not find a "${ group_label_text }" group on this page.`).to.not.be.empty;
 
-    if ( !group_id_elem ) {
-      throw `I did not find "${ group_label }"`;
-    } else {
-      group_name = await group_id_elem.evaluate(( elem ) => elem.getAttribute('for'));
-    }
+    group_name = await group_label.evaluate(( elem ) => elem.getAttribute('for'));
   }
 
   // labels for choices
-  let label_xpath = `//*[@id="daform"]//label[@role="checkbox" or @role="radio"]`;
-  // Labels for a group of items end in the group name plus _0, _1, etc.
-  // Ex: `[contains(@for, "X2ZpZWxkXzA_")]`
+  let label_xpath = `//*[@id="daform"]//label[${ type }]`;
+  // Labels for a group of items will end in the group name plus _0, _1, etc. Ex: `[contains(@for, "X2ZpZWxkXzA_")]`
   if ( group_name ) { label_xpath += `[contains(@for, "${ group_name }_")]` }
-  // These labels don't have text, their descendants do. Dig down in all
-  // the labels to look for the text, then for those that match, come back out
-  // and pick up that label. Ex: `//*[contains(text(), "My case")]/ancestor-or-self::label`
+  // These labels don't have text, their descendants do. Dig down to find matches then come back out to get the label again.
+  // Ex: `//*[contains(text(), "My case")]/ancestor-or-self::label`
   if ( label_text ) { label_xpath += `//*[contains(text(), "${ label_text }")]/ancestor-or-self::label` }
   // The index to identify just one. It's 1-indexed. xpath still makes an array. Ex: `[1]`
   label_xpath += `[${ index + 1 }]`;
-  // ex: `//*[@id="daform"]//label[@role="checkbox" or @role="radio"][contains(@for, "X2ZpZWxkXzA_")]//*[contains(text(), "My case")]/ancestor-or-self::label[1]`
+  // Ex: `//*[@id="daform"]//label[@role="checkbox" or @role="radio"][contains(@for, "X2ZpZWxkXzA_")]//*[contains(text(), "My case")]/ancestor-or-self::label[1]`
 
   let [elem] = await scope.page.$x( label_xpath );
+  expect( elem, `Did not find anything where the ${ ordinal } "${ label_text }" should have been.`).to.not.be.empty;
 
   // See if it's checked or not
   let is_checked = await elem.evaluate((elem) => {
-    // return elem.innerHTML;
     return elem.getAttribute('aria-checked') === 'true';
   });
   let what_it_should_be = expected_status === 'checked';
