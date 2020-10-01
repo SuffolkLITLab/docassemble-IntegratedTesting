@@ -184,7 +184,7 @@ Then(the_checkbox_is_as_expected, async (ordinal, label_text, choice_type, group
   ordinal = ordinal || 'first';
   label_text = label_text || '';
   group_label_text = group_label_text || '';
-  
+
   let index = ordinal_to_integer[ ordinal ];
   let type = `@role="${ choice_type }"`  // Is this complicating things to much?
   if ( choice_type === 'choice') { type = `@role="checkbox" or @role="radio"` }
@@ -234,9 +234,9 @@ Then(/I (don't|can't) continue/, async (unused) => {  // √
 
 Then('I will be told an answer is invalid', async () => {  // √
   let error_message_elem = await Promise.race([
-      scope.page.waitForSelector('.alert-danger'),
-      scope.page.waitForSelector('.da-has-error'),
-    ]);
+    scope.page.waitForSelector('.alert-danger'),
+    scope.page.waitForSelector('.da-has-error'),
+  ]);
   expect( error_message_elem ).to.exist;
 
   await scope.afterStep(scope);
@@ -361,7 +361,7 @@ When(/I tap the (button|link) "([^"]+)"/, async (elemType, phrase) => {  // √
 // UI element interaction
 //#####################################
 
-When('I tap the defined text link {string}', async (phrase) => {  // ~
+When('I tap the defined text link {string}', async (phrase) => {  // hold
   /* Not sure what 'defined' means here. Maybe for terms? */
   const [link] = await scope.page.$x(`//a[contains(text(), "${phrase}")]`);
   if (link) {
@@ -392,7 +392,7 @@ When(/I tap the option with the text "([^"]+)"/, async (label_text) => {
   *    its text has to match exactly and it turns out taping labels
   *    works for more than one thing.
   */
-  let choice = await scope.page.waitForSelector( `label[aria-label*="${ label_text }"]` );
+  let choice = await scope.page.$( `label[aria-label*="${ label_text }"]` );
   await choice[ scope.activate ]();
 
   await scope.afterStep(scope, {waitForShowIf: true});
@@ -406,7 +406,6 @@ When('I tap the {string} choice', async (label_text) => {
   /* Taps the first checkbox/radio/thing with a label that contains `label_text`.
   *    Very limited. Anything more is a future feature.
   */
-  await scope.page.waitForSelector('label');
   let choice = await scope.page.$( `label[aria-label*="${ label_text }"]` );
   await choice[ scope.activate ]();
 
@@ -464,6 +463,7 @@ When(/I select "([^"]+)" from the ?(?:"([^"]+)")? dropdown/, async (option_text,
 // );
 
 Then('I type {string} in the {string} field', async (value, field_label) => {
+  // This may work: $x('//form[@id="daform"]//input[@alt="Input box"]')
   let id = await scope.getTextFieldId(scope, field_label);
   await scope.page.type( '#' + id, value );
 
