@@ -462,18 +462,11 @@ When(/I select "([^"]+)" from the ?(?:"([^"]+)")? dropdown/, async (option_text,
 //   }
 // );
 
-Then('I type {string} in the {string} field', async (value, field_label) => {
+Then(/I set the ?(?:"([^"]+)")? text field to "([^"]*)"/, async (field_label, value) => {
   /* Clears the matching textfield in the question area and then types in it */
   let id = await scope.getTextFieldId(scope, field_label);
   await scope.page.$eval(`#${id}`, (el) => { el.value = ''});
   await scope.page.type( `#${id}`, value );
-  await scope.afterStep(scope, {waitForShowIf: true});
-});
-
-Then('I type {string} in the unlabeled field', async (value) => {
-  /* Clears the first textfield in the question area and then types in it. */
-  await scope.page.$eval(`#daquestion input[alt*="Input box"]`, (el) => { el.value = ''});
-  await scope.page.type( `#daquestion input[alt*="Input box"]`, value );
   await scope.afterStep(scope, {waitForShowIf: true});
 });
 

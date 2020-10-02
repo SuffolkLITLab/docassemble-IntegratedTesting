@@ -1,17 +1,22 @@
 module.exports = {
   getTextFieldId: async function getTextFieldId(scope, field_label) {
-    // make sure at least one is on screen
-    await scope.page.waitFor('label[class*="datext"]');
 
-    let field_id = await scope.page.$$eval('label[class*="datext"]', (elements, field_label) => {
-      let elems_array = Array.from( elements );
-      for ( let elem of elems_array ) {
-        if (( elem.innerText ).includes( field_label )) {
-          return elem.getAttribute( 'for' );
-        }
-      }  // End for labels
+    let field_id;
+    if ( field_label ) {
+      field_id = await scope.page.$$eval('label[class*="datext"]', (elements, field_label) => {
+        let elems_array = Array.from( elements );
+        for ( let elem of elems_array ) {
+          if (( elem.innerText ).includes( field_label )) {
+            return elem.getAttribute( 'for' );
+          }
+        }  // End for labels
 
-    }, field_label);
+      }, field_label);
+    } else {
+      field_id = await scope.page.$eval(`#daquestion input[alt*="Input box"]`, (elem) => {
+        return elem.getAttribute('id');
+      });
+    }
 
     return field_id;
   },

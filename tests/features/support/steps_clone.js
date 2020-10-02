@@ -151,11 +151,11 @@ KEY:
 // Or maybe there should be 'set', 'type', and 'clear' options.
 //x too vague @step(r'I set "([^"]+)" to "([^"]*)"')
 //x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"')
-// ~ @step(r'I set the text box to "([^"]*)"')
+// √ @step(r'I set the ""? text box to "([^"]*)"')
 // ~ @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
 // ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)?
-// ~1 I type {string} in the {string} field  // not actually working
-// ~1 I type {string} in the unlabeled field  // not actually working
+//x I type {string} in the {string} field  // not actually working
+//x I type {string} in the unlabeled field  // not actually working
 
 // ? I clear the textbox
 
