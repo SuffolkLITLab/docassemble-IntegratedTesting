@@ -27,12 +27,15 @@ Scenario: Observe
   Then the "I accept" checkbox is unchecked
   Then the first "I accept" checkbox is unchecked
 
+  When I tap the button "Next"
+  Then I can't continue
+  Then I will be told an answer is invalid
+
   Then the "terms of use" link leads to "https://massaccess.suffolklitlab.org/privacy/"
   Then the "terms of use" link opens in a new window
   Then the "terms of use" link opens a working page
 
   When I tap the button "Next"
-  Then I can't continue
   Then I will be told an answer is invalid
 
   When I tap the "I accept" choice
