@@ -38,4 +38,3 @@ Scenario: Observe
   When I tap the "I accept" choice
   When I tap the button "Next"
   Then I arrive at the next page
-  Then I set the text field to "Who knows?"
