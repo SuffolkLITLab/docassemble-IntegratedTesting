@@ -13,7 +13,8 @@ code: |
   # Custom title text, green words/help text, terms of use link, checkbox controls continuation
   interview_short_title = 'Shared content tests'
   acknowledged_information_use
-  text_no_label_default
+  set_unspecified_text_fields
+  set_specified_text_fields
   #users[0].other_contact_method
   #users.gather()
   #users[0].address.address
@@ -31,12 +32,31 @@ code: |
   #courts[0]
   tests_over
 ---
-id: one unlabeled text field with a default
+id: set unspecified text fields
 question: |
   One unlabeled text field with a default
 fields:
-  - no label: text_no_label_default
-    default: A default
+  - no label: text_no_specifier_edit
+    default: No specifier
+  - no label: text_no_specifier_ordianal_edit
+    default: Field 2
+  - no label: text_no_specifier_leave
+    default: Leave this alone
+continue button field: set_unspecified_text_fields
+---
+id: set specified text fields
+question: |
+  One unlabeled text field with a default
+fields:
+  - Leave alone: text_with_specifiers_leave_alone_1
+    default: Leave alone
+  - Specify label: text_label_specifier_edit
+    default: Label
+  - Specify ordinal: text_ordinal_specifier_edit
+    default: Ordinal
+  - Also leave this alone: text_with_specifiers_leave_alone_1
+    default: Leave alone
+continue button field: set_specified_text_fields
 ---
 id: tests_over
 event: tests_over
