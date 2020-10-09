@@ -3,11 +3,11 @@
 
 /*
 KEY:
-1. √ means implemented
+1. √ means implemented 
 1. x means won't implement
 1. ~ means needs to be done
 1. ? means needs to be discussed
-1. ^ means a version is done, but may need improvement
+1. ^ means a version is done, but may need improvement 
 */
 
 // // Copying some da aloe steps
@@ -139,52 +139,52 @@ KEY:
 // ^ I select "" from the "" dropdown
 // ? I choose "([^"]+)" from the ${ descriptor } dropdown
 // ? I set the "([^"]*)" dropdown to "([^"]*)"
-// ? I pick "" from the "" dropdown?
+// ? I pick "" from the "" dropdown? 
 
 // These could be better differentiated
-// ? @step(r'I select "([^"]+)" as the "([^"]+)"')  // options
+// ? @step(r'I select "([^"]+)" as the "([^"]+)"')  // options 
 // ? @step(r'I select "([^"]+)" as the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)"')
 // All could be combined with regex?
-// ? I pick ""?
+// ? I pick ""? 
 
 // They're both (all?) text fields. Combine these two? The end behavior is a little different for some reason.
-// 'set' is a good way of expressing that they're cleared first, but maybe clearing should be done separately?
+// 'set' is a good way of expressing that they're cleared first, but maybe clearing should be done separately? 
 // Or maybe there should be 'set', 'type', and 'clear' options.
 //x too vague @step(r'I set "([^"]+)" to "([^"]*)"')
-//x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"')
+//x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"') 
 // √ @step(r'I set the ""? text box to "([^"]*)"')
 // ~ @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
-// ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)?
+// ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)? 
 //x I type {string} in the {string} field  // not actually working
 //x I type {string} in the unlabeled field  // not actually working
 
-// ? I clear the textbox
+// ? I clear the textbox 
 
 // ? @step(r'I set the text area to "([^"]*)"')
 // ? I type "([^"]*)" in the ${ specified } textarea
 
-// ? I clear the textarea
+// ? I clear the textarea 
 
 // Radio buttons or checkboxes. 'option' is confusing.
 //x @step(r'I tap the "([^"]+)" option under "([^"]+)"')
-//x @step(r'I tap the "([^"]+)" option')
+//x @step(r'I tap the "([^"]+)" option') 
 //x @step(r'I tap the option "([^"]+)" under "([^"]+)"')
 //x @step(r'I tap the option "([^"]+)"')
 // ? I tap the {ordinal} "([^"]+)" (choice|checkbox|radio) under ?(?: the)? ?{ordianl} "([^"]+)"
-// ^? I tap the (button|link) "([^"]+)"
+// ^? I tap the (button|link) "([^"]+)" 
 // ^? I tap the option with the text "([^"]+)" (too vague?)
 // ^? I tap the {string} choice (too vague?)
 
-// ? @step(r'I unfocus')  // Not sure of this one
+// ? @step(r'I unfocus')  // Not sure of this one 
 // ? I tap somewhere else?
 
-// ^? I tap the defined text link {string}  // I tap the term?
+// ^? I tap the defined text link {string}  // I tap the term? 
 
 // ~ @step(r'I go to the help screen')
-// Still 'I tap'? A possible alterntive to it if someone's really struggling to make the text match?
+// Still 'I tap'? A possible alterntive to it if someone's really struggling to make the text match? 
 
 // ~ @step(r'I go back to the question screen')
 
 //x @step(r'I tap inside the signature area')
-// ^ I sign  // Add 'They'?
+// ^ I sign  // Add 'They'? 
 
