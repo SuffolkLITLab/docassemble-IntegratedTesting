@@ -24,13 +24,13 @@
   },
   "homepage": "https://github.com/SuffolkLITLab/docassemble-IntegratedTesting#readme",
   "dependencies": {
+    "bufferutil": "^4.0.1",
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
-    "docassemble-cucumber": "^0.1.29",
+    "docassemble-cucumber": "^0.1.30",
     "dotenv": "^8.2.0",
     "mocha": "^7.2.0",
     "puppeteer": "^3.1.0",
-    "bufferutil": "^4.0.1",
     "utf-8-validate": "^5.0.2"
   }
 }
