@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo 'These tests are fake. Use `local`' && mocha tests --timeout 10000",
-    "cucumber": "./node_modules/.bin/cucumber-js tests/features/*.feature",
+    "cucumber": "./node_modules/.bin/da-cucumber tests/features/*.feature",
     "setup": "node_modules/.bin/da-setup",
     "takedown": "node_modules/.bin/da-takedown",
     "local": "npm run setup && npm run cucumber; npm run takedown"
@@ -27,7 +27,7 @@
     "bufferutil": "^4.0.1",
     "chai": "^4.2.0",
     "cucumber": "^6.0.5",
-    "docassemble-cucumber": "^0.1.34",
+    "docassemble-cucumber": "^0.2.8",
     "dotenv": "^8.2.0",
     "mocha": "^7.2.0",
     "puppeteer": "^3.1.0",
