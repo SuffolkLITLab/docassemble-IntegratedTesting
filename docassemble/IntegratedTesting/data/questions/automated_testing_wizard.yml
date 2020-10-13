@@ -1,0 +1,179 @@
+---
+metadata:
+  title: Automate Integrated Testing
+  description: Generate files for automated integrated testing with github
+---
+objects:
+  - package_json: DAFile
+  - gitignore: DAFile
+  - test_form: DAFile
+  - interview_loads: DAFile
+---
+id: interview order
+mandatory: True
+code: |
+  env
+  run_on_github
+  write_files
+  next_steps
+---
+id: environment variables
+question: |
+  Project info
+fields:
+  - Github address: github_address
+continue button field: env
+---
+id: local
+question: |
+  Where will the tests run?
+fields:
+  - Automated on github: run_on_github
+    datatype: yesnowide
+  - I will run them on my computer too: run_on_local
+    datatype: yesnowide
+---
+code: |
+  package_json.initialize(filename = 'package.json')
+  package_json.write(package_json_template.content)
+  package_json.commit()
+  
+  gitignore.initialize(filename = '.gitignore')
+  gitignore.write("blah")
+  gitignore.commit()
+  
+  #test_form.initialize(filename = 'test_form.yml')
+  #test_form.write(test_form_action_template.content)
+  #test_form.commit(filename = 'test_form.yml')
+  #
+  #interview_loads.initialize(filename = 'interview_loads.feature')
+  #interview_loads.write(filename = 'interview_loads.feature')
+  #interview_loads.commit(filename = 'interview_loads.feature')
+  
+  write_files = True
+---
+template: package_json_template
+content: |
+  {
+    "name": "docassemble-Something",
+    "version": "0.1.0",
+    "description": "An Assembly Line project.",
+    "main": "",
+    "scripts": {
+      "cucumber": "./node_modules/.bin/cucumber-js --require ./node_modules/docassemble-cucumber/lib/index.js tests/features/*.feature",
+      "setup": "node_modules/.bin/da-setup",
+      "takedown": "node_modules/.bin/da-takedown",
+      "local": "npm run setup && npm run cucumber; npm run takedown"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/SuffolkLITLab/docassemble-Something.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/SuffolkLITLab/docassemble-Something/issues"
+    },
+    "homepage": "https://github.com/SuffolkLITLab/docassemble-Something#readme",
+    "dependencies": {
+      "bufferutil": "^4.0.1",
+      "chai": "^4.2.0",
+      "cucumber": "^6.0.5",
+      "docassemble-cucumber": "^0.2.18",
+      "dotenv": "^8.2.0",
+      "mocha": "^7.2.0",
+      "puppeteer": "^3.1.0",
+      "utf-8-validate": "^5.0.2"
+    }
+  }
+---
+template: test_form_action_template
+content: |
+  on: [push]
+
+  jobs:
+
+    puppeteer-tests:
+      runs-on: ubuntu-latest
+
+      strategy:
+        matrix:
+          node-version: [12.x]
+
+      env:
+        PLAYGROUND_EMAIL: ${{ secrets.PLAYGROUND_EMAIL }}
+        PLAYGROUND_PASSWORD: ${{ secrets.PLAYGROUND_PASSWORD }}
+        PLAYGROUND_ID: ${{ secrets.PLAYGROUND_ID }}
+        BASE_URL: https://apps-dev.suffolklitlab.org/
+        REPO_URL: https://github.com/SuffolkLITLab/docassemble-IntegratedTesting
+        BRANCH_PATH: ${{ github.ref }}
+
+      name: Run Puppeteer tests
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Setup environment
+          uses: actions/setup-node@v1
+          with:
+            node-version: ${{ matrix.node-version }}
+        - run: npm install
+        - run: npm run setup
+        - run: npm run cucumber
+        - name: upload artifacts
+          uses: actions/upload-artifact@v2
+          if: ${{ failure() }}
+          with:
+            name: screenshots
+            path: ./**/error-*.jpg
+        - name: Cleanup
+          if: ${{ always() }}
+          run: npm run takedown
+---
+id: next steps
+event: next_steps
+question: |
+  Next steps
+subquestion: |
+  ${ package_json.show() }
+  
+  [package_json](${ package_json.url_for(attachment=True) })
+  
+  ${ gitignore }
+
+  You will need to be an admin on the repo and go to your code's 'Settings' page and hit the 'Secrets' option in the left-hand column. You will then need to add three secrets.
+  
+  Your tests need to be able to log into an account on the docassemble server so that it has a place to run the tests. Ask the project managers if they have one in mind that they can give you the information for that account.
+  
+  Secret name | Secret value
+  :-------------|:-------------
+  PLAYGROUND_EMAIL | The email needed to log into the account.
+  PLAYGROUND_PASSWORD | The password for the account.
+  PLAYGROUND_ID | When you run an interview, the number that comes just after "i=docassemble.playground" in the account that you're using. For example "i=docassemble.playground42"
+
+  ### What to do with the files
+  1. Download them.
+  1. Go to your github repository.
+  1. Hit 'Add a file' and choose to upload files.
+  1. Upload these files:
+    1. `.gitignore`
+    1. `package.json`
+  1. Write a commit message like `Add files for automated testing` and hit 'commit'
+  1. Hit 'Add a file' again and choose to create a new file.
+  1. In the 'Name your file' text field, paste `.github/workflows/README.md` (will this error?)
+  1. In the text area, type `GitHub actions`.
+  1. Write a commit message like `Add github actions folder` and hit 'commit'
+  1. Hit 'Add a file' again and choose to upload files.
+  1. Upload this file:
+    1. `test_form.yml`
+  1. Hit 'Add a file' again and choose to create a new file.
+  1. In the 'Name your file' text field, paste `tests/features/README.md` (will this error?)
+  1. In the text area, type `GitHub actions`.
+  1. Write a commit message like `Add github actions folder` and hit 'commit'
+  1. Hit 'Add a file' again and choose to upload files.
+  1. Upload this file:
+    1. `interview_loads.feature`
+  
+buttons:
+ - Restart: restart
+---
+  
