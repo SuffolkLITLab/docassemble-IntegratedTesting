@@ -68,6 +68,7 @@ KEY:
 //x @step(r'I save a screenshot to "([^"]+)"')
 //x @step(r'I set the window size to ([0-9]+)x([0-9]+)') 
 //x @step(r'I screenshot the page')
+//x @step(r'I should see that "([^"]+)" is "([^"]+)"')  // What do? Anything with label 
 
 // √ @step(r'I wait (\d+) seconds?')
 
@@ -84,8 +85,6 @@ KEY:
 // √ the question id should be {string} 
 
 // √ I will be told an answer is invalid
-
-// ? @step(r'I should see that "([^"]+)" is "([^"]+)"')  // What do? Anything with label 
 
 // ? "" is selected/picked?
 // √ the third "blah" checkbox in "bleh" is checked
@@ -104,12 +103,12 @@ KEY:
 // ========================= 
 //x @step(r'I exit by taping "([^"]+)"')
 //x @step(r'If I see it, I will tap the link "([^"]+)"')
+//x I tap "([^"]+)" (can this be a button or link or anything?) (Include 1st, 2nd, etc?)
 
 // ? I tap the ${ specified } link "([^"]+)" 
 
 // Also sometimes not navigational
 // ^ @step(r'I tap the button "([^"]+)"') 
-// ? I tap "([^"]+)" (can this be a button or link or anything?) (Include 1st, 2nd, etc?)
 // ? @step(r'I tap the "([^"]+)" button')
 // ? @step(r'I tap the link "([^"]+)"') 
 // Maybe go with 'I tap'? Is that possible? Maybe we should stick to the script.
@@ -128,6 +127,7 @@ KEY:
 //x @step(r'I tap the question back button')
 //x @step(r'I tap the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) link "([^"]+)"') 
 //x @step(r'I tap the final link "([^"]+)"')
+//x I pick ""?
 
 // ? @step(r'I select "([^"]+)" in the combobox') 
 // ~ I pick "([^"]+)" in the { specified } combobox
@@ -145,15 +145,17 @@ KEY:
 // ? @step(r'I select "([^"]+)" as the "([^"]+)"')  // options 
 // ? @step(r'I select "([^"]+)" as the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)"')
 // All could be combined with regex?
-// ? I pick ""? 
 
 // They're both (all?) text fields. Combine these two? The end behavior is a little different for some reason.
 // 'set' is a good way of expressing that they're cleared first, but maybe clearing should be done separately? 
 // Or maybe there should be 'set', 'type', and 'clear' options.
+// 'fill' is another option that may be more human
 //x too vague @step(r'I set "([^"]+)" to "([^"]*)"')
 //x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"') 
-// √ @step(r'I set the ""? text box to "([^"]*)"')
-// ~ @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
+// ^ @step(r'I set the ""? text box to "([^"]*)"')  // Improved to what's below
+//x @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
+// ~? @step(r'I fill text box ([0-9]+) with "([^"]*)"')
+// ~? @step(r'I fill the (ordianl)? ""? text box with "([^"]*)"')  // New suggestion 2020/10/14
 // ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)? 
 //x I type {string} in the {string} field  // not actually working
 //x I type {string} in the unlabeled field  // not actually working
