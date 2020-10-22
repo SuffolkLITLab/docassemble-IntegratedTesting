@@ -12,7 +12,7 @@ Notes:
 * 1. the third "My court" checkbox in "Which service" is checked
 
 Scenario: Observe
-  Given I start the interview at "https://apps-dev.suffolklitlab.org/interview?i=docassemble.playground12AutomatedTesting%3Abasic_questions_tests.yml&new_session=1"
+  Given I start the interview at "basic_questions_tests"
   Then I wait 1 second
   Then I wait .5 seconds
   Then I do nothing
