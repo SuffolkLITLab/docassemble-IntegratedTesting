@@ -128,6 +128,14 @@ KEY:
 //x @step(r'I tap the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) link "([^"]+)"') 
 //x @step(r'I tap the final link "([^"]+)"')
 //x I pick ""?
+//x too vague @step(r'I set "([^"]+)" to "([^"]*)"')
+//x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"') 
+//x @step(r'I set the ""? text box to "([^"]*)"')  // Improved to what's below
+//x @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
+//x I fill text box ([0-9]+) with "([^"]*)"
+//x I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)?
+//x I type {string} in the {string} field
+//x I type {string} in the unlabeled field
 
 // ? @step(r'I select "([^"]+)" in the combobox') 
 // ~ I pick "([^"]+)" in the { specified } combobox
@@ -150,15 +158,8 @@ KEY:
 // 'set' is a good way of expressing that they're cleared first, but maybe clearing should be done separately? 
 // Or maybe there should be 'set', 'type', and 'clear' options.
 // 'fill' is another option that may be more human
-//x too vague @step(r'I set "([^"]+)" to "([^"]*)"')
-//x too vague @step(r'I set the (first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) "([^"]+)" to "([^"]*)"') 
-// ^ @step(r'I set the ""? text box to "([^"]*)"')  // Improved to what's below
-//x @step(r'I set text box ([0-9]+) to "([^"]*)"')  // combined with above
-// ~? @step(r'I fill text box ([0-9]+) with "([^"]*)"')
-// ~? @step(r'I fill the (ordianl)? ""? text box with "([^"]*)"')  // New suggestion 2020/10/14
-// ? I type "([^"]*)" ?(?:in)? (?:the)? ?("([^"]*)")? (?:text box)? 
-//x I type {string} in the {string} field  // not actually working
-//x I type {string} in the unlabeled field  // not actually working
+// √ I fill the (ordianl)? ""? text box with "([^"]*)"  // New suggestion 2020/10/14
+// ? Could this be I fill the oridnal ""? with ""  // 2020/1023
 
 // ? I clear the textbox 
 
@@ -182,10 +183,10 @@ KEY:
 
 // ^? I tap the defined text link {string}  // I tap the term? 
 
-// ~ @step(r'I go to the help screen')
+// √ @step(r'I go to the help screen')
 // Still 'I tap'? A possible alterntive to it if someone's really struggling to make the text match? 
 
-// ~ @step(r'I go back to the question screen')
+// √ @step(r'I go back to the question screen')
 
 //x @step(r'I tap inside the signature area')
 // ^ I sign  // Add 'They'? 
