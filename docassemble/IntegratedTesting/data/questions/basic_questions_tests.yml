@@ -8,6 +8,9 @@ comment: |
 include:
   - basic-questions.yml
 ---
+features:
+  question help button: True
+---
 mandatory: True
 code: |
   # Custom title text, green words/help text, terms of use link, checkbox controls continuation
@@ -15,21 +18,9 @@ code: |
   acknowledged_information_use
   set_unspecified_text_fields
   set_specified_text_fields
-  #users[0].other_contact_method
-  #users.gather()
-  #users[0].address.address
-  #user_role # this is a better test than user_ask_role now. It should trigger user_ask_role in this interview
-  #other_parties.gather()
-  #allowed_courts = [
-  #  'District Court',
-  #  'Boston Municipal Court',
-  #  #'Superior Court',
-  #  'Probate and Family Court',
-  #  'Juvenile Court',
-  #  'Housing Court',
-  #  'Land Court',    
-  #]
-  #courts[0]
+  button_1a
+  button_2a
+  yesnomaybe
   tests_over
 ---
 id: set unspecified text fields
@@ -43,6 +34,11 @@ fields:
   - no label: text_no_specifier_leave
     default: Leave this alone
 continue button field: set_unspecified_text_fields
+help:
+  label: Help!
+  heading: Help page
+  content: |
+    Helpful text.
 ---
 id: set specified text fields
 question: |
@@ -57,6 +53,25 @@ fields:
   - Also leave this alone: text_with_specifiers_leave_alone_1
     default: Leave alone
 continue button field: set_specified_text_fields
+---
+id: buttons 1
+question: |
+  Buttons 1
+buttons:
+  - Button 1a: button_1a
+  - Button 1b: button_1b
+---
+id: buttons 2
+question: |
+  Buttons 2
+buttons:
+  - Button 1a: button_2a
+  - Button 1b: button_2b
+---
+id: yes no maybe
+question: |
+  Yes no maybe
+yesnomaybe: yesnomaybe
 ---
 id: tests_over
 event: tests_over

@@ -20,6 +20,8 @@ code: |
 id: environment variables
 question: |
   Project info
+subquestion: |
+  You will need the help of an admin to complete this process.
 fields:
   - Github address: github_address
 continue button field: env
@@ -39,16 +41,16 @@ code: |
   package_json.commit()
   
   gitignore.initialize(filename = '.gitignore')
-  gitignore.write("blah")
+  gitignore.write(gitignore_template.content)
   gitignore.commit()
   
-  #test_form.initialize(filename = 'test_form.yml')
-  #test_form.write(test_form_action_template.content)
-  #test_form.commit(filename = 'test_form.yml')
-  #
-  #interview_loads.initialize(filename = 'interview_loads.feature')
-  #interview_loads.write(filename = 'interview_loads.feature')
-  #interview_loads.commit(filename = 'interview_loads.feature')
+  test_form.initialize(filename = 'test_form.yml')
+  test_form.write(test_form_action_template.content)
+  test_form.commit()
+  
+  interview_loads.initialize(filename = 'interview_loads.feature')
+  interview_loads.write(interview_loads_template.content)
+  interview_loads.commit()
   
   write_files = True
 ---
@@ -87,6 +89,17 @@ content: |
     }
   }
 ---
+template: gitignore_template
+content: |
+  *DS_Store*
+  tests/chromedriver
+  node_modules*
+  .env
+  npm-debug.log
+  .history
+  error*.jpg
+
+---
 template: test_form_action_template
 content: |
   on: [push]
@@ -101,12 +114,12 @@ content: |
           node-version: [12.x]
 
       env:
-        PLAYGROUND_EMAIL: ${{ secrets.PLAYGROUND_EMAIL }}
-        PLAYGROUND_PASSWORD: ${{ secrets.PLAYGROUND_PASSWORD }}
-        PLAYGROUND_ID: ${{ secrets.PLAYGROUND_ID }}
+        PLAYGROUND_EMAIL: ${ "${{ secrets.PLAYGROUND_EMAIL }}" }
+        PLAYGROUND_PASSWORD: ${ "${{ secrets.PLAYGROUND_PASSWORD }}" }
+        PLAYGROUND_ID: ${ "${{ secrets.PLAYGROUND_ID }}" }
         BASE_URL: https://apps-dev.suffolklitlab.org/
         REPO_URL: https://github.com/SuffolkLITLab/docassemble-IntegratedTesting
-        BRANCH_PATH: ${{ github.ref }}
+        BRANCH_PATH: ${ "${{ github.ref }}" }
 
       name: Run Puppeteer tests
       steps:
@@ -115,30 +128,44 @@ content: |
         - name: Setup environment
           uses: actions/setup-node@v1
           with:
-            node-version: ${{ matrix.node-version }}
+            node-version: ${ "${{ matrix.node-version }}" }
         - run: npm install
         - run: npm run setup
         - run: npm run cucumber
         - name: upload artifacts
           uses: actions/upload-artifact@v2
-          if: ${{ failure() }}
+          if: ${ "${{ failure() }}" }
           with:
             name: screenshots
             path: ./**/error-*.jpg
         - name: Cleanup
-          if: ${{ always() }}
+          if: ${ "${{ always() }}" }
           run: npm run takedown
+---
+template: interview_loads_template
+content: |
+  Feature: Interview loads
+
+  Just want to make sure this interview loads
+  before moving on to more complicated tests.
+
+  Scenario: Open the first page
+      Given I start the interview at 
+      Then an element should have the id "daMainQuestion"
+
 ---
 id: next steps
 event: next_steps
 question: |
   Next steps
 subquestion: |
-  ${ package_json.show() }
+  You will download a link that should contain these files:
+  - package.json
+  - .gitignore
+  - test_form.yml
+  - interview_loads.feature
   
-  [package_json](${ package_json.url_for(attachment=True) })
-  
-  ${ gitignore }
+  ${ zip_file( gitignore, package_json, test_form, interview_loads, filename="integrated_testing_files.zip" ) }
 
   You will need to be an admin on the repo and go to your code's 'Settings' page and hit the 'Secrets' option in the left-hand column. You will then need to add three secrets.
   
@@ -172,7 +199,7 @@ subquestion: |
   1. Hit 'Add a file' again and choose to upload files.
   1. Upload this file:
     1. `interview_loads.feature`
-  
+
 buttons:
  - Restart: restart
 ---
