@@ -8,3 +8,4 @@ node_modules*
 npm-debug.log
 .history
 error*.jpg
+screenshot_*.jpg
